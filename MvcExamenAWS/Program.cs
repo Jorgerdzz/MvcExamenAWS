@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MvcExamenAWS.Data;
 using MvcExamenAWS.Repositories;
 using MvcExamenAWS.Services;
+using MvcExamenAWS.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddTransient<ServiceBucketS3>();
 builder.Services.AddTransient<RepositoryZapatillas>();
-builder.Services.AddDbContext<ZapatillasContext>(x => x.UseMySQL(builder.Configuration.GetConnectionString("AWSMySQL")));
+
+string connectionString = await HelperSecretManager.GetValueSecretAsync();
+builder.Services.AddDbContext<ZapatillasContext>(x => x.UseMySQL(connectionString));
 
 var app = builder.Build();
 
